@@ -7,12 +7,13 @@ import (
 )
 
 type Controller struct {
-	botIDCounter int
-	pending      []*Order
-	processing   []*Order
-	completed    []*Order
-	bots         []Bot
-	events       []string
+	botIDCounter  int
+	pendingVIP    []*Order
+	pendingNormal []*Order
+	processing    []*Order
+	completed     []*Order
+	bots          []Bot
+	events        []string
 }
 
 func NewController() *Controller {
@@ -37,7 +38,7 @@ func (c *Controller) nextBotID() int {
 }
 
 func (c *Controller) StatusTable() string {
-	pending := orderLabels(c.pending, false)
+	pending := orderLabels(c.pendingOrders(), false)
 	completed := orderLabels(c.completed, false)
 	processing := orderLabels(c.processing, true)
 	bots := botLabels(c.bots)
@@ -76,13 +77,20 @@ func (c *Controller) StatusTable() string {
 	lines = append(lines, "")
 	lines = append(lines, fmt.Sprintf(
 		"Summary: %d pending, %d completed, %d processing, %d bots",
-		len(c.pending),
+		len(c.pendingVIP)+len(c.pendingNormal),
 		len(c.completed),
 		len(c.processing),
 		len(c.bots),
 	))
 
 	return strings.Join(lines, "\n")
+}
+
+func (c *Controller) pendingOrders() []*Order {
+	pending := make([]*Order, 0, len(c.pendingVIP)+len(c.pendingNormal))
+	pending = append(pending, c.pendingVIP...)
+	pending = append(pending, c.pendingNormal...)
+	return pending
 }
 
 func orderLabels(orders []*Order, includeBot bool) []string {
