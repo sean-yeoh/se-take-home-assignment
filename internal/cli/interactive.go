@@ -43,9 +43,7 @@ func RunInteractive(input io.Reader, output io.Writer) error {
 		case "+ normal order":
 			controller.AddNormalOrder()
 		case "+ vip order":
-			if _, err := fmt.Fprintf(output, "\nselected: %s\n", command); err != nil {
-				return err
-			}
+			controller.AddVIPOrder()
 		case "+ bot":
 			controller.AddBot()
 		case "- bot":

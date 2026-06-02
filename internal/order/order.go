@@ -35,6 +35,10 @@ func (c *Controller) AddNormalOrder() {
 	c.addOrder(Normal)
 }
 
+func (c *Controller) AddVIPOrder() {
+	c.addOrder(VIP)
+}
+
 func (c *Controller) addOrder(kind OrderKind) {
 	order := &Order{
 		ID:        c.nextOrderID(),
