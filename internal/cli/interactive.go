@@ -60,6 +60,9 @@ func RunInteractive(input io.Reader, output io.Writer) error {
 				return err
 			}
 		case "quit", "exit", "q":
+			if _, err := fmt.Fprintf(output, "\n%s\n", controller.FinalStatus()); err != nil {
+				return err
+			}
 			return nil
 		default:
 			if _, err := fmt.Fprintf(output, "\n%s\n", red(fmt.Sprintf("%q is not a valid command.", command))); err != nil {

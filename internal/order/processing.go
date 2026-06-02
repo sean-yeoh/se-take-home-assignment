@@ -85,6 +85,9 @@ func (c *Controller) completeOrder(botID int) {
 	processingTime := order.CompletedAt.Sub(order.StartedAt).Round(time.Second)
 	c.logEvent("Bot #%d completed %s Order #%d - Status: %s (Processing time: %s)", bot.ID, order.Kind, order.ID, order.Status, processingTime)
 	c.processPendingOrders()
+	if bot.State == Idle {
+		c.logEvent("Bot #%d is now IDLE - No pending orders", bot.ID)
+	}
 }
 
 func (c *Controller) findBotByID(botID int) *Bot {

@@ -97,11 +97,54 @@ func (c *Controller) StatusTable() string {
 	return strings.Join(lines, "\n")
 }
 
+func (c *Controller) FinalStatus() string {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	totalOrders := len(c.pendingVIP) + len(c.pendingNormal) + len(c.processing) + len(c.completed)
+	vipOrders, normalOrders := c.orderKindCounts()
+
+	return fmt.Sprintf(
+		"Final Status:\n- Total Orders Processed: %d (%d VIP, %d Normal)\n- Orders Completed: %d\n- Active Bots: %d\n- Pending Orders: %d",
+		totalOrders,
+		vipOrders,
+		normalOrders,
+		len(c.completed),
+		len(c.bots),
+		len(c.pendingVIP)+len(c.pendingNormal),
+	)
+}
+
 func (c *Controller) pendingOrders() []*Order {
 	pending := make([]*Order, 0, len(c.pendingVIP)+len(c.pendingNormal))
 	pending = append(pending, c.pendingVIP...)
 	pending = append(pending, c.pendingNormal...)
 	return pending
+}
+
+func (c *Controller) orderKindCounts() (vip int, normal int) {
+	for _, order := range c.pendingOrders() {
+		if order.Kind == VIP {
+			vip++
+		} else {
+			normal++
+		}
+	}
+	for _, order := range c.processing {
+		if order.Kind == VIP {
+			vip++
+		} else {
+			normal++
+		}
+	}
+	for _, order := range c.completed {
+		if order.Kind == VIP {
+			vip++
+		} else {
+			normal++
+		}
+	}
+	return vip, normal
 }
 
 func orderLabels(orders []*Order, includeBot bool) []string {

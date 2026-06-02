@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -22,8 +21,7 @@ func main() {
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			if cmd.Bool("demo") {
-				_, err := fmt.Fprintln(os.Stdout, "mode: demo")
-				return err
+				return ordercli.RunDemo(os.Stdout)
 			}
 			return ordercli.RunInteractive(os.Stdin, os.Stdout)
 		},
