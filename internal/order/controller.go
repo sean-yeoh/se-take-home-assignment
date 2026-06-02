@@ -3,10 +3,12 @@ package order
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 )
 
 type Controller struct {
+	mu             sync.Mutex
 	orderIDCounter int
 	botIDCounter   int
 	pendingVIP     []*Order
@@ -44,6 +46,9 @@ func (c *Controller) nextOrderID() int {
 }
 
 func (c *Controller) StatusTable() string {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	pending := orderLabels(c.pendingOrders(), false)
 	completed := orderLabels(c.completed, false)
 	processing := orderLabels(c.processing, true)

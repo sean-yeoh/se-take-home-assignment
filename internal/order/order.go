@@ -32,11 +32,19 @@ type Order struct {
 }
 
 func (c *Controller) AddNormalOrder() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	c.addOrder(Normal)
+	c.processPendingOrders()
 }
 
 func (c *Controller) AddVIPOrder() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	c.addOrder(VIP)
+	c.processPendingOrders()
 }
 
 func (c *Controller) addOrder(kind OrderKind) {
@@ -47,12 +55,15 @@ func (c *Controller) addOrder(kind OrderKind) {
 		CreatedAt: time.Now(),
 	}
 
-	switch kind {
+	c.enqueuePendingOrder(order)
+	c.logEvent("Created %s Order #%d - Status: %s", order.Kind, order.ID, order.Status)
+}
+
+func (c *Controller) enqueuePendingOrder(order *Order) {
+	switch order.Kind {
 	case VIP:
 		c.pendingVIP = append(c.pendingVIP, order)
 	default:
 		c.pendingNormal = append(c.pendingNormal, order)
 	}
-
-	c.logEvent("Created %s Order #%d - Status: %s", order.Kind, order.ID, order.Status)
 }
