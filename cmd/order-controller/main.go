@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v3"
+	ordercli "order-controller/internal/cli"
 )
 
 func main() {
@@ -20,12 +21,11 @@ func main() {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			mode := "interactive"
 			if cmd.Bool("demo") {
-				mode = "demo"
+				_, err := fmt.Fprintln(os.Stdout, "mode: demo")
+				return err
 			}
-			fmt.Printf("mode: %s\n", mode)
-			return nil
+			return ordercli.RunInteractive(os.Stdin, os.Stdout)
 		},
 	}
 
