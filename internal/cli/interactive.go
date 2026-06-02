@@ -40,10 +40,12 @@ func RunInteractive(input io.Reader, output io.Writer) error {
 		}
 
 		switch command {
-		case "+ normal order", "+ vip order", "+ bot", "- bot":
+		case "+ normal order", "+ vip order", "- bot":
 			if _, err := fmt.Fprintf(output, "\nselected: %s\n", command); err != nil {
 				return err
 			}
+		case "+ bot":
+			controller.AddBot()
 		case "status":
 			if _, err := fmt.Fprintf(output, "\n%s\n", controller.StatusTable()); err != nil {
 				return err

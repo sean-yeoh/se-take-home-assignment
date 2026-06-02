@@ -14,3 +14,13 @@ type Bot struct {
 	State BotState
 	Timer *time.Timer
 }
+
+func (c *Controller) AddBot() {
+	bot := Bot{
+		ID:    c.nextBotID(),
+		State: Idle,
+	}
+
+	c.bots = append(c.bots, bot)
+	c.logEvent("Bot #%d created - Status: %s", bot.ID, "ACTIVE")
+}

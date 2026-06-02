@@ -7,11 +7,12 @@ import (
 )
 
 type Controller struct {
-	pending    []*Order
-	processing []*Order
-	completed  []*Order
-	bots       []Bot
-	events     []string
+	botIDCounter int
+	pending      []*Order
+	processing   []*Order
+	completed    []*Order
+	bots         []Bot
+	events       []string
 }
 
 func NewController() *Controller {
@@ -28,6 +29,11 @@ func (c *Controller) logEvent(format string, args ...any) {
 
 	c.events = append(c.events, line)
 	fmt.Println(line)
+}
+
+func (c *Controller) nextBotID() int {
+	c.botIDCounter++
+	return c.botIDCounter
 }
 
 func (c *Controller) StatusTable() string {
