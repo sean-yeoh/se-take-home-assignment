@@ -30,3 +30,25 @@ type Order struct {
 	CompletedAt time.Time
 	BotID       int
 }
+
+func (c *Controller) AddNormalOrder() {
+	c.addOrder(Normal)
+}
+
+func (c *Controller) addOrder(kind OrderKind) {
+	order := &Order{
+		ID:        c.nextOrderID(),
+		Kind:      kind,
+		Status:    Pending,
+		CreatedAt: time.Now(),
+	}
+
+	switch kind {
+	case VIP:
+		c.pendingVIP = append(c.pendingVIP, order)
+	default:
+		c.pendingNormal = append(c.pendingNormal, order)
+	}
+
+	c.logEvent("Created %s Order #%d - Status: %s", order.Kind, order.ID, order.Status)
+}

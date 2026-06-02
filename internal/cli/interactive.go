@@ -40,7 +40,9 @@ func RunInteractive(input io.Reader, output io.Writer) error {
 		}
 
 		switch command {
-		case "+ normal order", "+ vip order":
+		case "+ normal order":
+			controller.AddNormalOrder()
+		case "+ vip order":
 			if _, err := fmt.Fprintf(output, "\nselected: %s\n", command); err != nil {
 				return err
 			}
