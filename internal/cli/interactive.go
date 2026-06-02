@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"order-controller/internal/order"
 	"strings"
 )
 
@@ -19,6 +20,8 @@ var availableCommands = []string{
 
 func RunInteractive(input io.Reader, output io.Writer) error {
 	scanner := bufio.NewScanner(input)
+	controller := order.NewController()
+
 	if err := printHelp(output); err != nil {
 		return err
 	}
@@ -37,8 +40,12 @@ func RunInteractive(input io.Reader, output io.Writer) error {
 		}
 
 		switch command {
-		case "+ normal order", "+ vip order", "+ bot", "- bot", "status":
+		case "+ normal order", "+ vip order", "+ bot", "- bot":
 			if _, err := fmt.Fprintf(output, "\nselected: %s\n", command); err != nil {
+				return err
+			}
+		case "status":
+			if _, err := fmt.Fprintf(output, "\n%s\n", controller.StatusTable()); err != nil {
 				return err
 			}
 		case "help":
