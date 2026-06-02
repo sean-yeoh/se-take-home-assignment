@@ -60,15 +60,15 @@ func (c *Controller) StatusTable() string {
 	}
 
 	rows := [][]string{
-		{"Pending", "Completed", "Processing", "Bots"},
-		{"-------", "---------", "----------", "----"},
+		{"Pending", "Processing", "Completed", "Bots"},
+		{"-------", "----------", "---------", "----"},
 	}
 
 	for i := 0; i < rowCount; i++ {
 		rows = append(rows, []string{
 			valueAt(pending, i),
-			valueAt(completed, i),
 			valueAt(processing, i),
+			valueAt(completed, i),
 			valueAt(bots, i),
 		})
 	}
@@ -87,10 +87,10 @@ func (c *Controller) StatusTable() string {
 
 	lines = append(lines, "")
 	lines = append(lines, fmt.Sprintf(
-		"Summary: %d pending, %d completed, %d processing, %d bots",
+		"Summary: %d pending, %d processing, %d completed, %d bots",
 		len(c.pendingVIP)+len(c.pendingNormal),
-		len(c.completed),
 		len(c.processing),
+		len(c.completed),
 		len(c.bots),
 	))
 
