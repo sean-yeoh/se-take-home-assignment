@@ -1,6 +1,7 @@
 package order
 
 import (
+	"sort"
 	"time"
 )
 
@@ -62,8 +63,16 @@ func (c *Controller) addOrder(kind OrderKind) {
 func (c *Controller) enqueuePendingOrder(order *Order) {
 	switch order.Kind {
 	case VIP:
-		c.pendingVIP = append(c.pendingVIP, order)
+		c.pendingVIP = insertPendingOrder(c.pendingVIP, order)
 	default:
-		c.pendingNormal = append(c.pendingNormal, order)
+		c.pendingNormal = insertPendingOrder(c.pendingNormal, order)
 	}
+}
+
+func insertPendingOrder(queue []*Order, order *Order) []*Order {
+	queue = append(queue, order)
+	sort.SliceStable(queue, func(i, j int) bool {
+		return queue[i].ID < queue[j].ID
+	})
+	return queue
 }

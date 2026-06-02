@@ -82,7 +82,8 @@ func (c *Controller) completeOrder(botID int) {
 	bot.State = Idle
 	bot.Timer = nil
 
-	c.logEvent("Bot #%d completed %s Order #%d - Status: %s (Processing time: 10s)", bot.ID, order.Kind, order.ID, order.Status)
+	processingTime := order.CompletedAt.Sub(order.StartedAt).Round(time.Second)
+	c.logEvent("Bot #%d completed %s Order #%d - Status: %s (Processing time: %s)", bot.ID, order.Kind, order.ID, order.Status, processingTime)
 	c.processPendingOrders()
 }
 
