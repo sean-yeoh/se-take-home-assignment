@@ -16,17 +16,42 @@ type Controller struct {
 	completed      []*Order
 	bots           []Bot
 	events         []string
+	afterFunc      AfterFunc
+	now            func() time.Time
 }
 
 func NewController() *Controller {
-	controller := &Controller{orderIDCounter: 1000}
+	return NewControllerWithTimer(realAfterFunc)
+}
+
+func NewControllerWithTimer(afterFunc AfterFunc) *Controller {
+	return NewControllerWithTimerAndClock(afterFunc, time.Now)
+}
+
+func NewControllerWithTimerAndClock(afterFunc AfterFunc, now func() time.Time) *Controller {
+	if afterFunc == nil {
+		afterFunc = realAfterFunc
+	}
+	if now == nil {
+		now = time.Now
+	}
+
+	controller := &Controller{
+		orderIDCounter: 1000,
+		afterFunc:      afterFunc,
+		now:            now,
+	}
 	controller.logEvent("System initialized with 0 bots")
 	return controller
 }
 
+func realAfterFunc(duration time.Duration, callback func()) Timer {
+	return time.AfterFunc(duration, callback)
+}
+
 func (c *Controller) logEvent(format string, args ...any) {
 	line := fmt.Sprintf("[%s] %s",
-		time.Now().Format("15:04:05"),
+		c.now().Format("15:04:05"),
 		fmt.Sprintf(format, args...),
 	)
 

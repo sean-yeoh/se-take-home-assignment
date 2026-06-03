@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const processingDuration = 10 * time.Second
+const ProcessingDuration = 10 * time.Second
 
 type OrderKind string
 
@@ -60,7 +60,7 @@ func (c *Controller) addOrder(kind OrderKind) {
 		ID:        c.nextOrderID(),
 		Kind:      kind,
 		Status:    Pending,
-		CreatedAt: time.Now(),
+		CreatedAt: c.now(),
 	}
 
 	c.enqueuePendingOrder(order)

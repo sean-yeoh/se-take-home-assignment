@@ -2,6 +2,12 @@ package order
 
 import "time"
 
+type Timer interface {
+	Stop() bool
+}
+
+type AfterFunc func(time.Duration, func()) Timer
+
 type BotState string
 
 const (
@@ -12,7 +18,7 @@ const (
 type Bot struct {
 	ID    int
 	State BotState
-	Timer *time.Timer
+	Timer Timer
 }
 
 func (c *Controller) AddBot() {

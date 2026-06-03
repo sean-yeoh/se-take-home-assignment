@@ -48,13 +48,13 @@ func (c *Controller) startProcessing(bot *Bot, order *Order) {
 
 	order.Status = Processing
 	order.BotID = bot.ID
-	order.StartedAt = time.Now()
+	order.StartedAt = c.now()
 
 	c.processing = append(c.processing, order)
 	c.logEvent("Bot #%d picked up %s Order #%d - Status: %s", bot.ID, order.Kind, order.ID, order.Status)
 
 	botID := bot.ID
-	bot.Timer = time.AfterFunc(processingDuration, func() {
+	bot.Timer = c.afterFunc(ProcessingDuration, func() {
 		c.completeOrder(botID)
 	})
 }
@@ -76,7 +76,7 @@ func (c *Controller) completeOrder(botID int) {
 	c.processing = append(c.processing[:index], c.processing[index+1:]...)
 	order.Status = Complete
 	order.BotID = 0
-	order.CompletedAt = time.Now()
+	order.CompletedAt = c.now()
 	c.completed = append(c.completed, order)
 
 	bot.State = Idle
