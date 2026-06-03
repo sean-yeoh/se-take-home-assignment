@@ -48,6 +48,13 @@ func (c *Controller) AddVIPOrder() {
 	c.processPendingOrders()
 }
 
+func (c *Controller) pendingOrders() []*Order {
+	pending := make([]*Order, 0, len(c.pendingVIP)+len(c.pendingNormal))
+	pending = append(pending, c.pendingVIP...)
+	pending = append(pending, c.pendingNormal...)
+	return pending
+}
+
 func (c *Controller) addOrder(kind OrderKind) {
 	order := &Order{
 		ID:        c.nextOrderID(),
